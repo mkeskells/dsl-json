@@ -24,7 +24,22 @@ import java.util.*;
  * For maximum performance JsonWriter instances should be reused (to avoid allocation of new byte[] buffer instances).
  * They should not be shared across threads (concurrently) so for Thread reuse it's best to use patterns such as ThreadLocal.
  */
-public final class JsonWriter {
+public class JsonWriter {
+	public static class Factory {
+
+		public JsonWriter create(@Nullable final UnknownSerializer unknownSerializer) {
+			return new JsonWriter(unknownSerializer);
+		}
+
+		public JsonWriter create(int size, @Nullable final UnknownSerializer unknownSerializer) {
+			return new JsonWriter(size, unknownSerializer);
+		}
+
+		public JsonWriter create(byte[] buffer, @Nullable final UnknownSerializer unknownSerializer) {
+			return new JsonWriter(buffer, unknownSerializer);equals(git remotes
+			q)
+		}
+	}
 
 	final byte[] ensureCapacity(final int free) {
 		if (position + free >= buffer.length) {
@@ -45,15 +60,15 @@ public final class JsonWriter {
 	private final UnknownSerializer unknownSerializer;
 	private final Grisu3.FastDtoaBuilder doubleBuilder = new Grisu3.FastDtoaBuilder();
 
-	JsonWriter(@Nullable final UnknownSerializer unknownSerializer) {
+	protected JsonWriter(@Nullable final UnknownSerializer unknownSerializer) {
 		this(512, unknownSerializer);
 	}
 
-	JsonWriter(final int size, @Nullable final UnknownSerializer unknownSerializer) {
+	protected JsonWriter(final int size, @Nullable final UnknownSerializer unknownSerializer) {
 		this(new byte[size], unknownSerializer);
 	}
 
-	JsonWriter(final byte[] buffer, @Nullable final UnknownSerializer unknownSerializer) {
+	protected JsonWriter(final byte[] buffer, @Nullable final UnknownSerializer unknownSerializer) {
 		this.buffer = buffer;
 		this.unknownSerializer = unknownSerializer;
 	}
